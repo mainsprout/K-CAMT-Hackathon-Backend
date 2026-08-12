@@ -98,3 +98,59 @@ const res = await fetch("http://localhost:8080/api/restaurants", {
 });
 const data = await res.json();
 ```
+
+---
+
+## 3. 음식 게시물 등록
+
+```
+POST /api/foods
+```
+
+- 인증: **필요** (로그인 세션 쿠키). 로그인 안 된 상태로 호출하면 `401 Unauthorized`
+- **`multipart/form-data`** 요청입니다 (JSON 아님) — 이미지 파일을 같이 보내야 하기 때문
+- 로그인한 사용자가 **소유하지 않은 가게(`restaurantId`)로 등록하면 에러**가 납니다 (본인 가게에만 등록 가능)
+- `closingTime`은 프론트에서 안 보냄 — 응답에서 연결된 가게의 `closeTime`을 그대로 내려줌
+
+**Request (form fields)**
+
+| 필드 | 타입 | 설명 |
+|---|---|---|
+| `restaurantId` | number | 게시물을 등록할 가게 ID |
+| `title` | string | 게시물 제목 |
+| `price` | number | 가격 |
+| `description` | string | 음식 설명 |
+| `image` | file | 이미지 파일 |
+
+**Response `200 OK`**
+```json
+{
+  "id": 1,
+  "title": "마감 할인 도시락",
+  "imageUrl": "/images/3f2504e0-...jpg",
+  "price": 3000,
+  "description": "오늘 만든 도시락 마감세일합니다",
+  "restaurantId": 1,
+  "closingTime": "22:00:00"
+}
+```
+`imageUrl`은 상대 경로로 내려오므로, 프론트에서 이미지를 띄울 땐 `http://localhost:8080` + `imageUrl`로 접근하면 됩니다. (예: `http://localhost:8080/images/3f2504e0-...jpg`)
+
+**예시 코드**
+```js
+const formData = new FormData();
+formData.append("restaurantId", 1);
+formData.append("title", "마감 할인 도시락");
+formData.append("price", 3000);
+formData.append("description", "오늘 만든 도시락 마감세일합니다");
+formData.append("image", fileInput.files[0]); // <input type="file"> 에서 가져온 파일
+
+const res = await fetch("http://localhost:8080/api/foods", {
+  method: "POST",
+  credentials: "include",
+  body: formData, // Content-Type 헤더는 직접 설정하지 말 것 (브라우저가 boundary 포함해서 자동 설정)
+});
+const data = await res.json();
+```
+
+> **주의**: `FormData`를 body로 보낼 땐 `Content-Type` 헤더를 직접 지정하면 안 됩니다. 브라우저가 자동으로 `multipart/form-data; boundary=...` 형식을 채워주는데, 수동으로 지정하면 boundary가 빠져서 요청이 깨집니다.
