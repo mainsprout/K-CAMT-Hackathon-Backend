@@ -154,3 +154,80 @@ const data = await res.json();
 ```
 
 > **주의**: `FormData`를 body로 보낼 땐 `Content-Type` 헤더를 직접 지정하면 안 됩니다. 브라우저가 자동으로 `multipart/form-data; boundary=...` 형식을 채워주는데, 수동으로 지정하면 boundary가 빠져서 요청이 깨집니다.
+
+---
+
+## 4. 음식 게시물 전체 조회
+
+```
+GET /api/foods
+```
+
+- 인증: 불필요 (로그인 안 해도 둘러볼 수 있음)
+- 최신 등록순(`id` 내림차순)으로 전체 목록 반환
+
+**Response `200 OK`**
+```json
+[
+  {
+    "id": 2,
+    "title": "마감 할인 샌드위치",
+    "imageUrl": "/images/9c858901-...jpg",
+    "price": 2000,
+    "description": "오늘 마감 세일합니다",
+    "restaurantId": 1,
+    "closingTime": "22:00:00"
+  },
+  {
+    "id": 1,
+    "title": "마감 할인 도시락",
+    "imageUrl": "/images/3f2504e0-...jpg",
+    "price": 3000,
+    "description": "오늘 만든 도시락 마감세일합니다",
+    "restaurantId": 1,
+    "closingTime": "22:00:00"
+  }
+]
+```
+
+**예시 코드**
+```js
+const res = await fetch("http://localhost:8080/api/foods", {
+  method: "GET",
+  credentials: "include",
+});
+const data = await res.json();
+```
+
+---
+
+## 5. 음식 게시물 상세 조회
+
+```
+GET /api/foods/{id}
+```
+
+- 인증: 불필요
+- 존재하지 않는 `id`로 요청하면 현재는 에러 응답 포맷이 정리 안 돼 있어 500으로 내려옴 (추후 정리 예정)
+
+**Response `200 OK`**
+```json
+{
+  "id": 1,
+  "title": "마감 할인 도시락",
+  "imageUrl": "/images/3f2504e0-...jpg",
+  "price": 3000,
+  "description": "오늘 만든 도시락 마감세일합니다",
+  "restaurantId": 1,
+  "closingTime": "22:00:00"
+}
+```
+
+**예시 코드**
+```js
+const res = await fetch(`http://localhost:8080/api/foods/${foodId}`, {
+  method: "GET",
+  credentials: "include",
+});
+const data = await res.json();
+```

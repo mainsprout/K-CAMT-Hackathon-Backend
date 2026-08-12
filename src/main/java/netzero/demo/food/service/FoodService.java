@@ -1,5 +1,6 @@
 package netzero.demo.food.service;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import netzero.demo.food.dto.FoodRegisterRequest;
 import netzero.demo.food.entity.Food;
@@ -39,5 +40,14 @@ public class FoodService {
                 .build();
 
         return foodRepository.save(food);
+    }
+
+    public List<Food> getAll() {
+        return foodRepository.findAllByOrderByIdDesc();
+    }
+
+    public Food getById(Long id) {
+        return foodRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시물입니다."));
     }
 }

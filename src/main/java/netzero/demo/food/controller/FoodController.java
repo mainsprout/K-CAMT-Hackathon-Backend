@@ -1,5 +1,6 @@
 package netzero.demo.food.controller;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import netzero.demo.food.dto.FoodRegisterRequest;
 import netzero.demo.food.dto.FoodResponse;
@@ -9,6 +10,8 @@ import netzero.demo.member.security.MemberPrincipal;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -34,6 +37,20 @@ public class FoodController {
     ) {
         FoodRegisterRequest request = new FoodRegisterRequest(restaurantId, title, price, description);
         Food food = foodService.register(request, image, principal.getMemberId());
+        return ResponseEntity.ok(FoodResponse.from(food));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<FoodResponse>> getAll() {
+        List<FoodResponse> responses = foodService.getAll().stream()
+                .map(FoodResponse::from)
+                .toList();
+        return ResponseEntity.ok(responses);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<FoodResponse> getById(@PathVariable Long id) {
+        Food food = foodService.getById(id);
         return ResponseEntity.ok(FoodResponse.from(food));
     }
 }
