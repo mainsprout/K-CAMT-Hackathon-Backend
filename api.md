@@ -51,7 +51,27 @@ const data = await res.json();
 
 ---
 
-## 2. 레스토랑 등록
+## 2. 로그아웃
+
+```
+POST /api/auth/logout
+```
+
+- 인증: 불필요 (로그인 안 된 상태로 호출해도 에러 없이 그냥 `200 OK`)
+- 요청/응답 바디 없음
+- 서버에 저장된 세션을 무효화함 — 호출 이후로는 이전에 발급된 `JSESSIONID` 쿠키가 더 이상 로그인 상태로 인식되지 않음
+
+**예시 코드**
+```js
+await fetch("http://localhost:8080/api/auth/logout", {
+  method: "POST",
+  credentials: "include",
+});
+```
+
+---
+
+## 3. 레스토랑 등록
 
 ```
 POST /api/restaurants
@@ -101,7 +121,7 @@ const data = await res.json();
 
 ---
 
-## 3. 음식 게시물 등록
+## 4. 음식 게시물 등록
 
 ```
 POST /api/foods
@@ -157,7 +177,7 @@ const data = await res.json();
 
 ---
 
-## 4. 음식 게시물 전체 조회
+## 5. 음식 게시물 전체 조회
 
 ```
 GET /api/foods
@@ -201,7 +221,7 @@ const data = await res.json();
 
 ---
 
-## 5. 음식 게시물 상세 조회
+## 6. 음식 게시물 상세 조회
 
 ```
 GET /api/foods/{id}

@@ -2,6 +2,7 @@ package netzero.demo.member.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import netzero.demo.member.dto.GoogleLoginRequest;
 import netzero.demo.member.dto.LoginResponse;
@@ -45,5 +46,16 @@ public class MemberLoginController {
         securityContextRepository.saveContext(context, httpRequest, httpResponse);
 
         return ResponseEntity.ok(LoginResponse.from(member));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(HttpServletRequest httpRequest) {
+        HttpSession session = httpRequest.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+        SecurityContextHolder.clearContext();
+
+        return ResponseEntity.ok().build();
     }
 }
