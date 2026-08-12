@@ -30,12 +30,14 @@ public class FoodController {
     public ResponseEntity<FoodResponse> register(
             @RequestParam Long restaurantId,
             @RequestParam String title,
-            @RequestParam Integer price,
+            @RequestParam Integer originalPrice,
+            @RequestParam Integer discountRate,
             @RequestParam String description,
             @RequestPart("image") MultipartFile image,
             @AuthenticationPrincipal MemberPrincipal principal
     ) {
-        FoodRegisterRequest request = new FoodRegisterRequest(restaurantId, title, price, description);
+        FoodRegisterRequest request =
+                new FoodRegisterRequest(restaurantId, title, originalPrice, discountRate, description);
         Food food = foodService.register(request, image, principal.getMemberId());
         return ResponseEntity.ok(FoodResponse.from(food));
     }

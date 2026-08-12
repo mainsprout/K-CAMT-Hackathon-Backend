@@ -34,7 +34,8 @@ public class FoodService {
         Food food = Food.builder()
                 .title(request.title())
                 .imageUrl(imageUrl)
-                .price(request.price())
+                .originalPrice(request.originalPrice())
+                .discountRate(request.discountRate())
                 .description(request.description())
                 .restaurant(restaurant)
                 .build();

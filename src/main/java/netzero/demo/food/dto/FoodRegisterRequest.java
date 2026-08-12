@@ -3,7 +3,8 @@ package netzero.demo.food.dto;
 public record FoodRegisterRequest(
         Long restaurantId,
         String title,
-        Integer price,
+        Integer originalPrice,
+        Integer discountRate,
         String description
 ) {
 
@@ -14,8 +15,11 @@ public record FoodRegisterRequest(
         if (title == null || title.isBlank()) {
             throw new IllegalArgumentException("title은 필수입니다.");
         }
-        if (price == null || price < 0) {
-            throw new IllegalArgumentException("price는 0 이상이어야 합니다.");
+        if (originalPrice == null || originalPrice < 0) {
+            throw new IllegalArgumentException("originalPrice는 0 이상이어야 합니다.");
+        }
+        if (discountRate == null || discountRate < 0 || discountRate > 100) {
+            throw new IllegalArgumentException("discountRate는 0~100 사이여야 합니다.");
         }
         if (description == null || description.isBlank()) {
             throw new IllegalArgumentException("description은 필수입니다.");

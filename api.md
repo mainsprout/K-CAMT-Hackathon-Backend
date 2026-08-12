@@ -131,6 +131,7 @@ POST /api/foods
 - **`multipart/form-data`** 요청입니다 (JSON 아님) — 이미지 파일을 같이 보내야 하기 때문
 - 로그인한 사용자가 **소유하지 않은 가게(`restaurantId`)로 등록하면 에러**가 납니다 (본인 가게에만 등록 가능)
 - `closingTime`은 프론트에서 안 보냄 — 응답에서 연결된 가게의 `closeTime`을 그대로 내려줌
+- 가격은 `price`가 아니라 **정가(`originalPrice`)와 할인율(`discountRate`)을 따로 저장**합니다. 최종 판매가(`discountedPrice`)는 서버가 `originalPrice * (100 - discountRate) / 100`으로 계산해서 응답에만 내려줍니다 (DB엔 저장 안 됨)
 
 **Request (form fields)**
 
@@ -138,7 +139,8 @@ POST /api/foods
 |---|---|---|
 | `restaurantId` | number | 게시물을 등록할 가게 ID |
 | `title` | string | 게시물 제목 |
-| `price` | number | 가격 |
+| `originalPrice` | number | 정가 |
+| `discountRate` | number | 할인율 (0~100 사이 정수, %) |
 | `description` | string | 음식 설명 |
 | `image` | file | 이미지 파일 |
 
@@ -148,7 +150,9 @@ POST /api/foods
   "id": 1,
   "title": "마감 할인 도시락",
   "imageUrl": "/images/3f2504e0-...jpg",
-  "price": 3000,
+  "originalPrice": 5000,
+  "discountRate": 30,
+  "discountedPrice": 3500,
   "description": "오늘 만든 도시락 마감세일합니다",
   "restaurantId": 1,
   "closingTime": "22:00:00"
@@ -161,7 +165,8 @@ POST /api/foods
 const formData = new FormData();
 formData.append("restaurantId", 1);
 formData.append("title", "마감 할인 도시락");
-formData.append("price", 3000);
+formData.append("originalPrice", 5000);
+formData.append("discountRate", 30);
 formData.append("description", "오늘 만든 도시락 마감세일합니다");
 formData.append("image", fileInput.files[0]); // <input type="file"> 에서 가져온 파일
 
@@ -193,7 +198,9 @@ GET /api/foods
     "id": 2,
     "title": "마감 할인 샌드위치",
     "imageUrl": "/images/9c858901-...jpg",
-    "price": 2000,
+    "originalPrice": 4000,
+    "discountRate": 50,
+    "discountedPrice": 2000,
     "description": "오늘 마감 세일합니다",
     "restaurantId": 1,
     "closingTime": "22:00:00"
@@ -202,7 +209,9 @@ GET /api/foods
     "id": 1,
     "title": "마감 할인 도시락",
     "imageUrl": "/images/3f2504e0-...jpg",
-    "price": 3000,
+    "originalPrice": 5000,
+    "discountRate": 30,
+    "discountedPrice": 3500,
     "description": "오늘 만든 도시락 마감세일합니다",
     "restaurantId": 1,
     "closingTime": "22:00:00"
@@ -236,7 +245,9 @@ GET /api/foods/{id}
   "id": 1,
   "title": "마감 할인 도시락",
   "imageUrl": "/images/3f2504e0-...jpg",
-  "price": 3000,
+  "originalPrice": 5000,
+  "discountRate": 30,
+  "discountedPrice": 3500,
   "description": "오늘 만든 도시락 마감세일합니다",
   "restaurantId": 1,
   "closingTime": "22:00:00"

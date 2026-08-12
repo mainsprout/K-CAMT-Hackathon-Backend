@@ -32,7 +32,10 @@ public class Food {
     private String imageUrl;
 
     @Column(nullable = false)
-    private Integer price;
+    private Integer originalPrice;
+
+    @Column(nullable = false)
+    private Integer discountRate;
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String description;
@@ -42,10 +45,12 @@ public class Food {
     private Restaurant restaurant;
 
     @Builder
-    private Food(String title, String imageUrl, Integer price, String description, Restaurant restaurant) {
+    private Food(String title, String imageUrl, Integer originalPrice, Integer discountRate,
+                 String description, Restaurant restaurant) {
         this.title = title;
         this.imageUrl = imageUrl;
-        this.price = price;
+        this.originalPrice = originalPrice;
+        this.discountRate = discountRate;
         this.description = description;
         this.restaurant = restaurant;
     }

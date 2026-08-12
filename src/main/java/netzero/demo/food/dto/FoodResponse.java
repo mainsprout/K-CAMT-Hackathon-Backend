@@ -7,18 +7,24 @@ public record FoodResponse(
         Long id,
         String title,
         String imageUrl,
-        Integer price,
+        Integer originalPrice,
+        Integer discountRate,
+        Integer discountedPrice,
         String description,
         Long restaurantId,
         LocalTime closingTime
 ) {
 
     public static FoodResponse from(Food food) {
+        int discountedPrice = food.getOriginalPrice() * (100 - food.getDiscountRate()) / 100;
+
         return new FoodResponse(
                 food.getId(),
                 food.getTitle(),
                 food.getImageUrl(),
-                food.getPrice(),
+                food.getOriginalPrice(),
+                food.getDiscountRate(),
+                discountedPrice,
                 food.getDescription(),
                 food.getRestaurant().getId(),
                 food.getRestaurant().getCloseTime()
