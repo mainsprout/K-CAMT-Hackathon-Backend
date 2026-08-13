@@ -1,5 +1,6 @@
 package netzero.demo.restaurant.service;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import netzero.demo.member.entity.Member;
 import netzero.demo.member.repository.MemberRepository;
@@ -15,6 +16,11 @@ public class RestaurantService {
 
     private final RestaurantRepository restaurantRepository;
     private final MemberRepository memberRepository;
+
+    @Transactional(readOnly = true)
+    public List<Restaurant> getMine(Long memberId) {
+        return restaurantRepository.findByOwnerId(memberId);
+    }
 
     @Transactional
     public Restaurant register(RestaurantRegisterRequest request, Long memberId) {
