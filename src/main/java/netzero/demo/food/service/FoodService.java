@@ -1,5 +1,7 @@
 package netzero.demo.food.service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import netzero.demo.food.dto.FoodRegisterRequest;
@@ -45,7 +47,9 @@ public class FoodService {
     }
 
     public List<Food> getAll() {
-        return foodRepository.findBySoldFalseOrderByIdDesc();
+        LocalDateTime todayStart = LocalDate.now().atStartOfDay();
+        LocalDateTime todayEnd = todayStart.plusDays(1);
+        return foodRepository.findBySoldFalseAndCreatedAtBetweenOrderByIdDesc(todayStart, todayEnd);
     }
 
     public Food getById(Long id) {

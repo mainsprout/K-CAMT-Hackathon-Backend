@@ -8,6 +8,7 @@ public enum FoodCategory {
     VEGE(new BigDecimal("1.2")),
     BAKERY(new BigDecimal("1.5")),
     PROCESSED(new BigDecimal("1.8")),
+    DRINKS(new BigDecimal("1.3")),
     DEFAULT(new BigDecimal("1.65"));
 
     private final BigDecimal mileageRate;

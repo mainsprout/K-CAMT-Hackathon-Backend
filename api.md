@@ -203,7 +203,7 @@ POST /api/foods
 - 로그인한 사용자가 **소유하지 않은 가게(`restaurantId`)로 등록하면 에러**가 납니다 (본인 가게에만 등록 가능)
 - `closingTime`은 프론트에서 안 보냄 — 응답에서 연결된 가게의 `closeTime`을 그대로 내려줌
 - 가격은 `price`가 아니라 **정가(`originalPrice`)와 할인율(`discountRate`)을 따로 저장**합니다. 최종 판매가(`discountedPrice`)는 서버가 `originalPrice * (100 - discountRate) / 100`으로 계산해서 응답에만 내려줍니다 (DB엔 저장 안 됨)
-- `category`는 마일리지 적립률과 직결됩니다 (구매 등록 API 참고). 아래 5개 값 중 하나여야 하며, 잘못된 값이면 에러가 납니다: `MEAT`, `VEGE`, `BAKERY`, `PROCESSED`, `DEFAULT`
+- `category`는 마일리지 적립률과 직결됩니다 (구매 등록 API 참고). 아래 6개 값 중 하나여야 하며, 잘못된 값이면 에러가 납니다: `MEAT`, `VEGE`, `BAKERY`, `PROCESSED`, `DRINKS`, `DEFAULT`
 
 **Request (form fields)**
 
@@ -214,7 +214,7 @@ POST /api/foods
 | `originalPrice` | number | 정가 |
 | `discountRate` | number | 할인율 (0~100 사이 정수, %) |
 | `description` | string | 음식 설명 |
-| `category` | string | 카테고리. `MEAT` \| `VEGE` \| `BAKERY` \| `PROCESSED` \| `DEFAULT` |
+| `category` | string | 카테고리. `MEAT` \| `VEGE` \| `BAKERY` \| `PROCESSED` \| `DRINKS` \| `DEFAULT` |
 | `image` | file | 이미지 파일 |
 
 **Response `200 OK`**
@@ -266,6 +266,7 @@ GET /api/foods
 
 - 인증: 불필요 (로그인 안 해도 둘러볼 수 있음)
 - 최신 등록순(`id` 내림차순)으로 전체 목록 반환
+- **오늘(서버 기준 당일 00:00~24:00) 등록된 게시물만** 반환됩니다. 어제 이전에 등록된 게시물은 목록에서 제외됨
 - **이미 판매된(`sold: true`) 게시물은 목록에서 제외**됩니다. 즉 이 API 응답에 나오는 게시물은 전부 `sold: false`이며, 필드 자체도 항상 `false`로 내려옴 (판매완료 항목을 보려면 상세 조회 API 사용)
 
 **Response `200 OK`**
@@ -369,6 +370,7 @@ POST /api/purchases
 | `VEGE` | 1.2% |
 | `BAKERY` | 1.5% |
 | `PROCESSED` | 1.8% |
+| `DRINKS` | 1.3% |
 | `DEFAULT` | 1.65% |
 
 **Request Body**

@@ -10,7 +10,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -53,6 +55,9 @@ public class Food {
     @JoinColumn(name = "restaurant_id", nullable = false)
     private Restaurant restaurant;
 
+    @Column(nullable = false, updatable = false, columnDefinition = "datetime default CURRENT_TIMESTAMP")
+    private LocalDateTime createdAt;
+
     @Builder
     private Food(String title, String imageUrl, Integer originalPrice, Integer discountRate,
                  String description, FoodCategory category, Restaurant restaurant) {
@@ -64,6 +69,11 @@ public class Food {
         this.category = category;
         this.restaurant = restaurant;
         this.sold = false;
+    }
+
+    @PrePersist
+    private void prePersist() {
+        this.createdAt = LocalDateTime.now();
     }
 
     public void markSold() {
