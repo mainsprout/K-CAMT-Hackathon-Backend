@@ -6,7 +6,7 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import netzero.demo.member.dto.GoogleLoginRequest;
 import netzero.demo.member.dto.LoginResponse;
-import netzero.demo.member.dto.MemberTypeResponse;
+import netzero.demo.member.dto.MemberRoleResponse;
 import netzero.demo.member.entity.Member;
 import netzero.demo.member.security.MemberPrincipal;
 import netzero.demo.member.service.MemberService;
@@ -52,8 +52,9 @@ public class MemberLoginController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<MemberTypeResponse> getMemberType(@AuthenticationPrincipal MemberPrincipal principal) {
-        return ResponseEntity.ok(memberService.getMemberType(principal.getMemberId()));
+    public ResponseEntity<MemberRoleResponse> getMe(@AuthenticationPrincipal MemberPrincipal principal) {
+        Member member = memberService.getMember(principal.getMemberId());
+        return ResponseEntity.ok(MemberRoleResponse.from(member));
     }
 
     @PostMapping("/logout")

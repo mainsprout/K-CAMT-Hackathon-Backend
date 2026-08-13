@@ -32,9 +32,11 @@ POST /api/auth/google
 {
   "memberId": 1,
   "email": "example@gmail.com",
-  "name": "홍길동"
+  "name": "홍길동",
+  "role": "NONE"
 }
 ```
+`role`은 `"NONE"` | `"MEMBER"` | `"RESTAURANT"` 중 하나입니다. **처음 가입한 회원은 `NONE`으로 내려옵니다** — 프론트에서 역할 선택 화면을 띄우고, 3번 API로 `MEMBER`/`RESTAURANT` 중 하나를 선택하게 해야 합니다. 이미 역할을 선택한 회원은 재로그인 시 그 값이 그대로 내려옵니다.
 
 성공 시 응답과 함께 `Set-Cookie`로 세션이 발급됩니다. 이후 요청부터는 이 쿠키가 자동으로 전송되어 로그인 상태가 유지됩니다.
 
@@ -71,24 +73,63 @@ await fetch("http://localhost:8080/api/auth/logout", {
 
 ---
 
-## 3. 내 계정 타입 조회
+## 3. 역할 설정
+
+```
+PATCH /api/members/role
+```
+
+- 인증: **필요** (로그인 세션 쿠키). 로그인 안 된 상태로 호출하면 `401 Unauthorized`
+- 처음 가입해서 `role`이 `NONE`인 회원이 자신의 역할을 **일반 회원(`MEMBER`)** 또는 **가게 사장님(`RESTAURANT`)** 으로 선택/변경할 때 사용
+- `memberId`는 프론트에서 보낼 필요 없음 — 로그인 세션에서 자동으로 채움
+- `role`에 `"NONE"`을 보내거나 빠뜨리면 에러
+
+**Request Body**
+```json
+{
+  "role": "MEMBER"
+}
+```
+`role`은 `"MEMBER"` 또는 `"RESTAURANT"` 중 하나여야 합니다.
+
+**Response `200 OK`**
+```json
+{
+  "memberId": 1,
+  "role": "MEMBER"
+}
+```
+
+**예시 코드**
+```js
+const res = await fetch("http://localhost:8080/api/members/role", {
+  method: "PATCH",
+  headers: { "Content-Type": "application/json" },
+  credentials: "include",
+  body: JSON.stringify({ role: "MEMBER" }),
+});
+const data = await res.json();
+```
+
+---
+
+## 4. 내 역할 조회
 
 ```
 GET /api/auth/me
 ```
 
 - 인증: **필요** (로그인 세션 쿠키). 로그인 안 된 상태로 호출하면 `401 Unauthorized`
-- 로그인한 사용자가 **일반 회원(`MEMBER`)인지, 가게를 등록한 오너(`RESTAURANT`)인지** 판단해서 내려줌
-- 별도의 "레스토랑 계정"이 있는 게 아니라, 로그인한 회원이 레스토랑을 하나라도 등록(4번 API)했으면 `RESTAURANT`, 아니면 `MEMBER`로 내려옴
+- 로그인한 사용자의 현재 `role`을 조회. Google 로그인(1번) 응답에도 같은 값이 내려오므로, 세션이 이미 있는 상태에서 역할만 다시 확인하고 싶을 때 사용
 
 **Response `200 OK`**
 ```json
 {
   "memberId": 1,
-  "type": "MEMBER"
+  "role": "MEMBER"
 }
 ```
-`type`은 `"MEMBER"` 또는 `"RESTAURANT"` 둘 중 하나입니다.
+`role`은 `"NONE"` | `"MEMBER"` | `"RESTAURANT"` 중 하나입니다.
 
 **예시 코드**
 ```js
@@ -101,7 +142,7 @@ const data = await res.json();
 
 ---
 
-## 4. 레스토랑 등록
+## 5. 레스토랑 등록
 
 ```
 POST /api/restaurants
@@ -151,7 +192,7 @@ const data = await res.json();
 
 ---
 
-## 5. 음식 게시물 등록
+## 6. 음식 게시물 등록
 
 ```
 POST /api/foods
@@ -217,7 +258,7 @@ const data = await res.json();
 
 ---
 
-## 6. 음식 게시물 전체 조회
+## 7. 음식 게시물 전체 조회
 
 ```
 GET /api/foods
@@ -270,7 +311,7 @@ const data = await res.json();
 
 ---
 
-## 7. 음식 게시물 상세 조회
+## 8. 음식 게시물 상세 조회
 
 ```
 GET /api/foods/{id}
@@ -278,7 +319,7 @@ GET /api/foods/{id}
 
 - 인증: 불필요
 - 존재하지 않는 `id`로 요청하면 현재는 에러 응답 포맷이 정리 안 돼 있어 500으로 내려옴 (추후 정리 예정)
-- 목록 조회(6번)와 달리 **판매완료된 게시물도 조회 가능**합니다 — 실제 `sold` 값(`true`/`false`)이 그대로 내려옴
+- 목록 조회(7번)와 달리 **판매완료된 게시물도 조회 가능**합니다 — 실제 `sold` 값(`true`/`false`)이 그대로 내려옴
 
 **Response `200 OK`**
 ```json
@@ -308,7 +349,7 @@ const data = await res.json();
 
 ---
 
-## 8. 구매 등록
+## 9. 구매 등록
 
 ```
 POST /api/purchases
@@ -370,7 +411,7 @@ const data = await res.json();
 
 ---
 
-## 9. 마일리지 잔액 조회
+## 10. 마일리지 잔액 조회
 
 ```
 GET /api/members/{memberId}/mileage

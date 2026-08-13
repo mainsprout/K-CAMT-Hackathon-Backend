@@ -2,6 +2,8 @@ package netzero.demo.member.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -37,6 +39,10 @@ public class Member {
     @Column(nullable = false)
     private Integer mileageBalance;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, columnDefinition = "varchar(20) default 'NONE'")
+    private MemberRole role;
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -47,6 +53,7 @@ public class Member {
         this.name = name;
         this.profileImageUrl = profileImageUrl;
         this.mileageBalance = 0;
+        this.role = MemberRole.NONE;
     }
 
     @PrePersist
@@ -61,5 +68,9 @@ public class Member {
 
     public void earnMileage(int amount) {
         this.mileageBalance += amount;
+    }
+
+    public void updateRole(MemberRole role) {
+        this.role = role;
     }
 }
