@@ -8,5 +8,5 @@ public interface FoodRepository extends JpaRepository<Food, Long> {
 
     List<Food> findByRestaurantId(Long restaurantId);
 
-    List<Food> findAllByOrderByIdDesc();
+    List<Food> findBySoldFalseOrderByIdDesc();
 }

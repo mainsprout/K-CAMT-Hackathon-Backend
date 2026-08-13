@@ -2,6 +2,8 @@ package netzero.demo.food.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -40,18 +42,31 @@ public class Food {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String description;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private FoodCategory category;
+
+    @Column(nullable = false)
+    private Boolean sold;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_id", nullable = false)
     private Restaurant restaurant;
 
     @Builder
     private Food(String title, String imageUrl, Integer originalPrice, Integer discountRate,
-                 String description, Restaurant restaurant) {
+                 String description, FoodCategory category, Restaurant restaurant) {
         this.title = title;
         this.imageUrl = imageUrl;
         this.originalPrice = originalPrice;
         this.discountRate = discountRate;
         this.description = description;
+        this.category = category;
         this.restaurant = restaurant;
+        this.sold = false;
+    }
+
+    public void markSold() {
+        this.sold = true;
     }
 }

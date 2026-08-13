@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import netzero.demo.food.dto.FoodRegisterRequest;
 import netzero.demo.food.dto.FoodResponse;
 import netzero.demo.food.entity.Food;
+import netzero.demo.food.entity.FoodCategory;
 import netzero.demo.food.service.FoodService;
 import netzero.demo.member.security.MemberPrincipal;
 import org.springframework.http.MediaType;
@@ -33,11 +34,12 @@ public class FoodController {
             @RequestParam Integer originalPrice,
             @RequestParam Integer discountRate,
             @RequestParam String description,
+            @RequestParam FoodCategory category,
             @RequestPart("image") MultipartFile image,
             @AuthenticationPrincipal MemberPrincipal principal
     ) {
         FoodRegisterRequest request =
-                new FoodRegisterRequest(restaurantId, title, originalPrice, discountRate, description);
+                new FoodRegisterRequest(restaurantId, title, originalPrice, discountRate, description, category);
         Food food = foodService.register(request, image, principal.getMemberId());
         return ResponseEntity.ok(FoodResponse.from(food));
     }

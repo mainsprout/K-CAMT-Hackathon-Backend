@@ -37,6 +37,7 @@ public class FoodService {
                 .originalPrice(request.originalPrice())
                 .discountRate(request.discountRate())
                 .description(request.description())
+                .category(request.category())
                 .restaurant(restaurant)
                 .build();
 
@@ -44,7 +45,7 @@ public class FoodService {
     }
 
     public List<Food> getAll() {
-        return foodRepository.findAllByOrderByIdDesc();
+        return foodRepository.findBySoldFalseOrderByIdDesc();
     }
 
     public Food getById(Long id) {

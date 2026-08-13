@@ -34,6 +34,9 @@ public class Member {
 
     private String profileImageUrl;
 
+    @Column(nullable = false)
+    private Integer mileageBalance;
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -43,6 +46,7 @@ public class Member {
         this.email = email;
         this.name = name;
         this.profileImageUrl = profileImageUrl;
+        this.mileageBalance = 0;
     }
 
     @PrePersist
@@ -53,5 +57,9 @@ public class Member {
     public void updateProfile(String name, String profileImageUrl) {
         this.name = name;
         this.profileImageUrl = profileImageUrl;
+    }
+
+    public void earnMileage(int amount) {
+        this.mileageBalance += amount;
     }
 }

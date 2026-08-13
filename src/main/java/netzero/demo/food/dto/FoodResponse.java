@@ -2,6 +2,7 @@ package netzero.demo.food.dto;
 
 import java.time.LocalTime;
 import netzero.demo.food.entity.Food;
+import netzero.demo.food.entity.FoodCategory;
 
 public record FoodResponse(
         Long id,
@@ -11,6 +12,8 @@ public record FoodResponse(
         Integer discountRate,
         Integer discountedPrice,
         String description,
+        FoodCategory category,
+        Boolean sold,
         Long restaurantId,
         LocalTime closingTime
 ) {
@@ -26,6 +29,8 @@ public record FoodResponse(
                 food.getDiscountRate(),
                 discountedPrice,
                 food.getDescription(),
+                food.getCategory(),
+                food.getSold(),
                 food.getRestaurant().getId(),
                 food.getRestaurant().getCloseTime()
         );

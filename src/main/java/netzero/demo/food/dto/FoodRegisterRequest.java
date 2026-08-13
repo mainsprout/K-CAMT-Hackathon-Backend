@@ -1,11 +1,14 @@
 package netzero.demo.food.dto;
 
+import netzero.demo.food.entity.FoodCategory;
+
 public record FoodRegisterRequest(
         Long restaurantId,
         String title,
         Integer originalPrice,
         Integer discountRate,
-        String description
+        String description,
+        FoodCategory category
 ) {
 
     public FoodRegisterRequest {
@@ -23,6 +26,9 @@ public record FoodRegisterRequest(
         }
         if (description == null || description.isBlank()) {
             throw new IllegalArgumentException("description은 필수입니다.");
+        }
+        if (category == null) {
+            throw new IllegalArgumentException("category는 필수입니다.");
         }
     }
 }
