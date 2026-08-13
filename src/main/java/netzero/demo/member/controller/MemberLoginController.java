@@ -6,15 +6,18 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import netzero.demo.member.dto.GoogleLoginRequest;
 import netzero.demo.member.dto.LoginResponse;
+import netzero.demo.member.dto.MemberTypeResponse;
 import netzero.demo.member.entity.Member;
 import netzero.demo.member.security.MemberPrincipal;
 import netzero.demo.member.service.MemberService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,6 +49,11 @@ public class MemberLoginController {
         securityContextRepository.saveContext(context, httpRequest, httpResponse);
 
         return ResponseEntity.ok(LoginResponse.from(member));
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<MemberTypeResponse> getMemberType(@AuthenticationPrincipal MemberPrincipal principal) {
+        return ResponseEntity.ok(memberService.getMemberType(principal.getMemberId()));
     }
 
     @PostMapping("/logout")

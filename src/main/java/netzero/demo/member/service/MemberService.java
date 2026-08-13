@@ -5,8 +5,10 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import lombok.RequiredArgsConstructor;
+import netzero.demo.member.dto.MemberTypeResponse;
 import netzero.demo.member.entity.Member;
 import netzero.demo.member.repository.MemberRepository;
+import netzero.demo.restaurant.repository.RestaurantRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,7 +17,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final RestaurantRepository restaurantRepository;
     private final GoogleIdTokenVerifier googleIdTokenVerifier;
+
+    public MemberTypeResponse getMemberType(Long memberId) {
+        boolean isRestaurantOwner = restaurantRepository.existsByOwnerId(memberId);
+        return MemberTypeResponse.of(memberId, isRestaurantOwner);
+    }
 
     @Transactional
     public Member loginWithGoogle(String idToken) {

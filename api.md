@@ -5,7 +5,7 @@
 - Base URL: `http://localhost:8080`
 - 인증 방식: 세션 쿠키(`JSESSIONID`) 기반. **모든 요청에 `credentials: "include"` 필수**
 - 인증이 필요한 API는 별도 토큰/식별자를 body나 header에 넣을 필요 없음 — 쿠키만 있으면 서버가 로그인한 사용자를 알아서 식별함
-- CORS: `http://localhost:3000` 오리진만 허용됨 (프론트 포트가 바뀌면 백엔드에 알려주세요)
+- CORS: `http://localhost:*`, `http://127.0.0.1:*` (모든 포트 허용)
 - Content-Type: `application/json`
 - 에러 응답 포맷은 아직 통일 안 됨 — 현재는 Spring 기본 에러 형식(500/400 등)으로 내려감
 
@@ -71,7 +71,37 @@ await fetch("http://localhost:8080/api/auth/logout", {
 
 ---
 
-## 3. 레스토랑 등록
+## 3. 내 계정 타입 조회
+
+```
+GET /api/auth/me
+```
+
+- 인증: **필요** (로그인 세션 쿠키). 로그인 안 된 상태로 호출하면 `401 Unauthorized`
+- 로그인한 사용자가 **일반 회원(`MEMBER`)인지, 가게를 등록한 오너(`RESTAURANT`)인지** 판단해서 내려줌
+- 별도의 "레스토랑 계정"이 있는 게 아니라, 로그인한 회원이 레스토랑을 하나라도 등록(4번 API)했으면 `RESTAURANT`, 아니면 `MEMBER`로 내려옴
+
+**Response `200 OK`**
+```json
+{
+  "memberId": 1,
+  "type": "MEMBER"
+}
+```
+`type`은 `"MEMBER"` 또는 `"RESTAURANT"` 둘 중 하나입니다.
+
+**예시 코드**
+```js
+const res = await fetch("http://localhost:8080/api/auth/me", {
+  method: "GET",
+  credentials: "include",
+});
+const data = await res.json();
+```
+
+---
+
+## 4. 레스토랑 등록
 
 ```
 POST /api/restaurants
@@ -121,7 +151,7 @@ const data = await res.json();
 
 ---
 
-## 4. 음식 게시물 등록
+## 5. 음식 게시물 등록
 
 ```
 POST /api/foods
@@ -187,7 +217,7 @@ const data = await res.json();
 
 ---
 
-## 5. 음식 게시물 전체 조회
+## 6. 음식 게시물 전체 조회
 
 ```
 GET /api/foods
@@ -240,7 +270,7 @@ const data = await res.json();
 
 ---
 
-## 6. 음식 게시물 상세 조회
+## 7. 음식 게시물 상세 조회
 
 ```
 GET /api/foods/{id}
@@ -248,7 +278,7 @@ GET /api/foods/{id}
 
 - 인증: 불필요
 - 존재하지 않는 `id`로 요청하면 현재는 에러 응답 포맷이 정리 안 돼 있어 500으로 내려옴 (추후 정리 예정)
-- 목록 조회(4번)와 달리 **판매완료된 게시물도 조회 가능**합니다 — 실제 `sold` 값(`true`/`false`)이 그대로 내려옴
+- 목록 조회(6번)와 달리 **판매완료된 게시물도 조회 가능**합니다 — 실제 `sold` 값(`true`/`false`)이 그대로 내려옴
 
 **Response `200 OK`**
 ```json
@@ -278,7 +308,7 @@ const data = await res.json();
 
 ---
 
-## 7. 구매 등록
+## 8. 구매 등록
 
 ```
 POST /api/purchases
@@ -340,7 +370,7 @@ const data = await res.json();
 
 ---
 
-## 8. 마일리지 잔액 조회
+## 9. 마일리지 잔액 조회
 
 ```
 GET /api/members/{memberId}/mileage
