@@ -312,7 +312,47 @@ const data = await res.json();
 
 ---
 
-## 8. 음식 게시물 상세 조회
+## 8. 카테고리별 음식 게시물 조회
+
+```
+GET /api/foods/category/{category}
+```
+
+- 인증: 불필요 (로그인 안 해도 둘러볼 수 있음)
+- 전체 조회(7번)와 동일한 조건(오늘 등록분만, `sold: false`만, 최신 등록순)에 **카테고리 필터만 추가**된 API
+- `{category}`는 `MEAT` | `VEGE` | `BAKERY` | `PROCESSED` | `DRINKS` | `DEFAULT` 중 하나. 잘못된 값이면 에러가 남
+
+**Response `200 OK`**
+```json
+[
+  {
+    "id": 2,
+    "title": "마감 할인 샌드위치",
+    "imageUrl": "/images/9c858901-...jpg",
+    "originalPrice": 4000,
+    "discountRate": 50,
+    "discountedPrice": 2000,
+    "description": "오늘 마감 세일합니다",
+    "category": "BAKERY",
+    "sold": false,
+    "restaurantId": 1,
+    "closingTime": "22:00:00"
+  }
+]
+```
+
+**예시 코드**
+```js
+const res = await fetch("http://localhost:8080/api/foods/category/BAKERY", {
+  method: "GET",
+  credentials: "include",
+});
+const data = await res.json();
+```
+
+---
+
+## 9. 음식 게시물 상세 조회
 
 ```
 GET /api/foods/{id}
@@ -320,7 +360,7 @@ GET /api/foods/{id}
 
 - 인증: 불필요
 - 존재하지 않는 `id`로 요청하면 현재는 에러 응답 포맷이 정리 안 돼 있어 500으로 내려옴 (추후 정리 예정)
-- 목록 조회(7번)와 달리 **판매완료된 게시물도 조회 가능**합니다 — 실제 `sold` 값(`true`/`false`)이 그대로 내려옴
+- 목록 조회(7, 8번)와 달리 **판매완료된 게시물도 조회 가능**합니다 — 실제 `sold` 값(`true`/`false`)이 그대로 내려옴
 
 **Response `200 OK`**
 ```json
@@ -350,7 +390,7 @@ const data = await res.json();
 
 ---
 
-## 9. 구매 등록
+## 10. 구매 등록
 
 ```
 POST /api/purchases
@@ -413,7 +453,7 @@ const data = await res.json();
 
 ---
 
-## 10. 마일리지 잔액 조회
+## 11. 마일리지 잔액 조회
 
 ```
 GET /api/members/{memberId}/mileage

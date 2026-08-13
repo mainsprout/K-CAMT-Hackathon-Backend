@@ -6,6 +6,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import netzero.demo.food.dto.FoodRegisterRequest;
 import netzero.demo.food.entity.Food;
+import netzero.demo.food.entity.FoodCategory;
 import netzero.demo.food.repository.FoodRepository;
 import netzero.demo.global.file.LocalFileStorageService;
 import netzero.demo.restaurant.entity.Restaurant;
@@ -50,6 +51,13 @@ public class FoodService {
         LocalDateTime todayStart = LocalDate.now().atStartOfDay();
         LocalDateTime todayEnd = todayStart.plusDays(1);
         return foodRepository.findBySoldFalseAndCreatedAtBetweenOrderByIdDesc(todayStart, todayEnd);
+    }
+
+    public List<Food> getByCategory(FoodCategory category) {
+        LocalDateTime todayStart = LocalDate.now().atStartOfDay();
+        LocalDateTime todayEnd = todayStart.plusDays(1);
+        return foodRepository.findBySoldFalseAndCategoryAndCreatedAtBetweenOrderByIdDesc(
+                category, todayStart, todayEnd);
     }
 
     public Food getById(Long id) {

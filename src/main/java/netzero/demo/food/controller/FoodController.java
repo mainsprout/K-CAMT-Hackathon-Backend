@@ -52,6 +52,14 @@ public class FoodController {
         return ResponseEntity.ok(responses);
     }
 
+    @GetMapping("/category/{category}")
+    public ResponseEntity<List<FoodResponse>> getByCategory(@PathVariable FoodCategory category) {
+        List<FoodResponse> responses = foodService.getByCategory(category).stream()
+                .map(FoodResponse::from)
+                .toList();
+        return ResponseEntity.ok(responses);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<FoodResponse> getById(@PathVariable Long id) {
         Food food = foodService.getById(id);
